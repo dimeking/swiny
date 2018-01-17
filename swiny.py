@@ -87,13 +87,13 @@ def to_piglatin(session_attributes, english_phrase):
             if is_vowel(letter): 
                 index = word.index(letter)
                 if index == 0:
-                    phrase.append(" " + word + " yay")
+                    phrase = phrase + " " + word + " yay"
                 else:
-                    phrase.append(" " + word[index:] + " " + word[:index] + " yay")
+                    phrase = phrase + " " + word[index:] + " " + word[:index] + "ay"
                 break
 
       
-    return phrase
+    return phrase.lstrip()
 
 def to_english(session_attributes, piglatin_phrase):
 
@@ -145,7 +145,7 @@ def to_english_in_session(intent, session):
         speech_output = "In English should sound like, " + english_phrase
     else:
         speech_output = "I didn't understand that. Try again by saying like, " \
-                        "What's rue tay ove lay in pig latin."
+                        "What's ue tray ove lay in pig latin."
 
 
     reprompt_text = "Tell me a phrase that you want hear in pig latin by saying like, " \
