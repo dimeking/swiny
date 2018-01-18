@@ -81,7 +81,7 @@ def to_piglatin(session_attributes, english_phrase):
     if not english_phrase:
         return "Swiny"
 
-    words = english_phrase.split()
+    words = english_phrase.lower().split()
     for word in words:
         for letter in word:
             if is_vowel(letter): 
@@ -120,11 +120,11 @@ def to_piglatin_in_session(intent, session):
         speech_output = "In Pig Latin it sounds like, " + piglatin_phrase
     else:
         speech_output = "I didn't understand that. Try again by saying like, " \
-                        "What's Virtual Reality in pig latin."
+                        "say Virtual Reality in pig latin."
 
 
     reprompt_text = "Tell me a phrase that you want hear in pig latin by saying like, " \
-                    "What's Good Morning in pig latin."
+                    "how to say Good Morning in pig latin."
 
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -221,8 +221,11 @@ def lambda_handler(event, context):
     prevent someone else from configuring a skill that sends requests to this
     function.
     """
-    if (event['session']['application']['applicationId'] !=
-             "amzn1.ask.skill.b4a4ac73-cc86-4975-89a8-45f76f20dfd5"):
+    app_ids = [ 
+        "amzn1.ask.skill.b4a4ac73-cc86-4975-89a8-45f76f20dfd5",
+        "amzn1.ask.skill.9f876b48-6641-45d8-af75-e649be4e83a0"
+        ]
+    if (event['session']['application']['applicationId'] not in app_ids):
          raise ValueError("Invalid Application ID")
 
     if event['session']['new']:
