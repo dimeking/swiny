@@ -87,9 +87,9 @@ def to_piglatin(session_attributes, english_phrase):
             if is_vowel(letter): 
                 index = word.index(letter)
                 if index == 0:
-                    phrase = phrase + " " + word + " yay"
+                    phrase = phrase + " " + word + "yay"
                 else:
-                    phrase = phrase + " " + word[index:] + " " + word[:index] + "ay"
+                    phrase = phrase + " " + word[index:] + word[:index] + "ay"
                 break
 
       
@@ -101,8 +101,21 @@ def to_english(session_attributes, piglatin_phrase):
     if not piglatin_phrase:
         return "Swiny"
         
-        
-    return phrase
+    words = piglatin_phrase.lower().split()
+    for word in words:
+        if word.endswith("yay"):
+            phrase = phrase + " " + word[:-3]
+        elif word.endswith("ay"):
+            e_word = word[:-2]
+            idx = len(e_word)
+            for letter in reversed(e_word):
+                if is_vowel(letter):
+                    break  
+                idx = idx - 1
+            phrase = phrase + " " + e_word[idx:] + e_word[:idx]
+
+
+    return phrase.lstrip()
 
 
 def to_piglatin_in_session(intent, session):
@@ -112,7 +125,7 @@ def to_piglatin_in_session(intent, session):
 
     card_title = intent['name']
     session_attributes = session.get('attributes', {})
-    should_end_session = False
+    should_end_session = True
 
     if 'Phrase' in intent['slots']:
         phrase = intent['slots']['Phrase']['value']
@@ -137,7 +150,7 @@ def to_english_in_session(intent, session):
 
     card_title = intent['name']
     session_attributes = session.get('attributes', {})
-    should_end_session = False
+    should_end_session = True
 
     if 'Phrase' in intent['slots']:
         phrase = intent['slots']['Phrase']['value']
