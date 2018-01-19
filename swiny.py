@@ -95,7 +95,28 @@ def to_piglatin(session_attributes, english_phrase):
       
     return phrase.lstrip()
 
-def to_english(session_attributes, piglatin_phrase):
+def to_gibberish(session_attributes, english_phrase):
+
+    phrase = ""
+    infix = "idig"
+    if not english_phrase:
+        return "Swiny"
+
+    words = english_phrase.lower().split()
+    for word in words:
+        for letter in word:
+            if is_vowel(letter): 
+                index = word.index(letter)
+                if index == 0:
+                    phrase = phrase + " " + infix + word
+                else:
+                    phrase = phrase + " " + word[:index] + infix + word[index:]
+                break
+
+      
+    return phrase.lstrip()
+
+def to_english_from_piglatin(session_attributes, piglatin_phrase):
 
     phrase = ""
     if not piglatin_phrase:
@@ -143,8 +164,8 @@ def to_piglatin_in_session(intent, session):
         card_title, speech_output, reprompt_text, should_end_session))
 
 
-def to_english_in_session(intent, session):
-    """ Translates Pig Latin to English in the session and prepares the speech to reply to the
+def to_gibberish_in_session(intent, session):
+    """ Translates English to Gibberish in the session and prepares the speech to reply to the
     user.
     """
 
@@ -154,15 +175,15 @@ def to_english_in_session(intent, session):
 
     if 'Phrase' in intent['slots']:
         phrase = intent['slots']['Phrase']['value']
-        english_phrase = to_english(session_attributes, phrase)
-        speech_output = "In English should sound like, " + english_phrase
+        gibberish_phrase = to_gibberish(session_attributes, phrase)
+        speech_output = "In Gibberish it sounds like, " + gibberish_phrase
     else:
         speech_output = "I didn't understand that. Try again by saying like, " \
-                        "What's ue tray ove lay in pig latin."
+                        "What's true love in gibberish."
 
 
-    reprompt_text = "Tell me a phrase that you want hear in pig latin by saying like, " \
-                    "What's ake way up yay in pig latin."
+    reprompt_text = "Tell me a phrase that you want hear in gibberish by saying like, " \
+                    "What's wake up in gibberish."
 
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -200,8 +221,8 @@ def on_intent(intent_request, session):
     # Dispatch to your skill's intent handlers
     if intent_name == "ToPigLatinIsIntent":
         return to_piglatin_in_session(intent, session)
-    elif intent_name == "ToEnglishIsIntent":
-        return to_english_in_session(intent, session)
+    elif intent_name == "ToGibberishIsIntent":
+        return to_gibberish_in_session(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
