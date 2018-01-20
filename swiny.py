@@ -8,6 +8,7 @@ http://amzn.to/1LGWsLG
 """
 
 from __future__ import print_function
+from hyphenate import hyphenate_word
 
 
 # --------------- Helpers that build all of the responses ----------------------
@@ -87,9 +88,9 @@ def to_piglatin(session_attributes, english_phrase):
             if is_vowel(letter): 
                 index = word.index(letter)
                 if index == 0:
-                    phrase = phrase + " " + word + "yay"
+                    phrase = phrase + " " + word + "-yay"
                 else:
-                    phrase = phrase + " " + word[index:] + word[:index] + "ay"
+                    phrase = phrase + " " + word[index:] + word[:index] + "-ay"
                 break
 
       
@@ -104,14 +105,16 @@ def to_gibberish(session_attributes, english_phrase):
 
     words = english_phrase.lower().split()
     for word in words:
-        for letter in word:
-            if is_vowel(letter): 
-                index = word.index(letter)
-                if index == 0:
-                    phrase = phrase + " " + infix + word
-                else:
-                    phrase = phrase + " " + word[:index] + infix + word[index:]
-                break
+        syllables = hyphenate_word(word)
+        for syllable in syllables:
+            for letter in syllable:
+                if is_vowel(letter): 
+                    index = syllable.index(letter)
+                    if index == 0:
+                        phrase = phrase + " " + infix + syllable
+                    else:
+                        phrase = phrase + " " + syllable[:index] + infix + syllable[index:]
+                    break
 
       
     return phrase.lstrip()

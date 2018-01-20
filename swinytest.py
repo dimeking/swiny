@@ -8,13 +8,16 @@ class TestSwiny(unittest.TestCase):
         pass
  
     def test_topiglatin_truelove(self):
-        self.assertEqual(to_piglatin({},"True Love"), "uetray ovelay")
+        self.assertEqual(to_piglatin({},"True Love"), "uetr-ay ovel-ay")
  
     def test_topiglatin_wakeup(self):
-        self.assertEqual(to_piglatin({},"wake up"), "akeway upyay")
+        self.assertEqual(to_piglatin({},"wake up"), "akew-ay up-yay")
  
     def test_togibberish_truelove(self):
         self.assertEqual(to_gibberish({},"true love"), "tridigue lidigove")
+ 
+    def test_togibberish_output(self):
+        self.assertEqual(to_gibberish({},"output"), "idigout pidigut")
  
     def test_togibberish_wakeup(self):
         self.assertEqual(to_gibberish({},"wake up"), "widigake idigup")
