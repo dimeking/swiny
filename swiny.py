@@ -528,6 +528,11 @@ skill_name = "Swiny Whiny"
 
 # --------------- Helpers that build all of the responses ----------------------
 
+def remove_tags(tag_text):
+    cleanr = re.compile('<.*?>')
+    cleantext = re.sub(cleanr, '', tag_text)
+    return cleantext
+
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
     return {
         'outputSpeech': {
@@ -537,7 +542,7 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         'card': {
             'type': 'Simple',
             'title': title,
-            'content': output
+            'content': remove_tags(output)
         },
         'reprompt': {
             'outputSpeech': {
@@ -699,8 +704,8 @@ def to_piglatin_in_session(intent, session):
     if 'Phrase' in intent['slots'] and 'value' in intent['slots']['Phrase']:
         phrase = intent['slots']['Phrase']['value']
         piglatin_phrase = to_piglatin(session_attributes, phrase)
-        speech_output = "In Pig Latin " + add_emphasis(phrase, 'moderate') + " sounds like, " + piglatin_phrase
-        speech_output = speech_output + add_break('1') + "Try another phrase."
+        speech_output = "In Pig Latin " + add_emphasis(phrase, 'moderate') + " sounds like, " + piglatin_phrase + "."
+        speech_output = speech_output + " " + add_break('1') + " Try another phrase."
     else:
         speech_output = "I didn't understand that. Try again by saying like, " \
                         "say wake up in pig latin."
@@ -725,8 +730,8 @@ def to_gibberish_in_session(intent, session):
     if 'Phrase' in intent['slots'] and 'value' in intent['slots']['Phrase']:
         phrase = intent['slots']['Phrase']['value']
         gibberish_phrase = to_gibberish(session_attributes, phrase)
-        speech_output = "In Gibberish " + add_emphasis(phrase, 'moderate') + " sounds like, " + gibberish_phrase
-        speech_output = speech_output + add_break('1') + "Try another phrase."
+        speech_output = "In Gibberish " + add_emphasis(phrase, 'moderate') + " sounds like, " + gibberish_phrase + "."
+        speech_output = speech_output + " " + add_break('1') + " Try another phrase."
     else:
         speech_output = "I didn't understand that. Try again by saying like, " \
                         "What's true love in gibberish."
