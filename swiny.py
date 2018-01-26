@@ -531,8 +531,8 @@ skill_name = "Swiny Whiny"
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
     return {
         'outputSpeech': {
-            'type': 'PlainText',
-            'text': output
+            'type': 'SSML',
+            'ssml': '<speak>' + output + '</speak>'
         },
         'card': {
             'type': 'Simple',
@@ -541,8 +541,8 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         },
         'reprompt': {
             'outputSpeech': {
-                'type': 'PlainText',
-                'text': reprompt_text
+                'type': 'SSML',
+                'ssml': '<speak>' + reprompt_text + '</speak>'
             }
         },
         'shouldEndSession': should_end_session
@@ -572,8 +572,29 @@ def get_welcome_response():
                     "What's output in gibberish."
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
-    reprompt_text = "Please tell me a phrase that you want hear in pig latin by saying like, " \
-                    "What's Good Morning in gibberish."
+    reprompt_text = "Tell me a phrase that you want hear in pig latin or gibberish by saying like, " \
+                    "Say wake up in pig latin. Or " \
+                    "What's true love in gibberish."
+    should_end_session = False
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def get_tryagain_response():
+    """ If we wanted to initialize the session to have some attributes we could
+    add those here
+    """
+
+    session_attributes = {}
+    card_title = skill_name + " - Try Again"
+    speech_output = "I didn't understand that. Try again by saying like, " \
+                    "say wake up in pig latin. Or " \
+                    "What's fake news in gibberish."
+
+
+    reprompt_text = "Tell me a phrase that you want hear in pig latin by saying like, " \
+                    "Say wake up in pig latin. Or " \
+                    "What's true love in gibberish."
+    
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -586,7 +607,7 @@ def handle_session_end_request():
     # Setting this to true ends the session and exits the skill.
     should_end_session = True
     return build_response({}, build_speechlet_response(
-        card_title, speech_output, None, should_end_session))
+        card_title, speech_output, "", should_end_session))
 
 def is_vowel(letter):
     vowels = ["a", "e", "i", "o", "u"]
@@ -657,6 +678,14 @@ def to_english_from_piglatin(session_attributes, piglatin_phrase):
 
     return phrase.lstrip()
 
+def add_emphasis(phrase, level):
+    return "<emphasis level=\"" + level + "\">" + phrase + "</emphasis>"
+    
+def add_paragraph(text):
+    return "<p>" + text + "</p>" 
+
+def add_break(time):
+    return "<break time=\"" + time + "s\"/>"
 
 def to_piglatin_in_session(intent, session):
     """ Translates English to Pig Latin in the session and prepares the speech to reply to the
@@ -667,10 +696,11 @@ def to_piglatin_in_session(intent, session):
     session_attributes = session.get('attributes', {})
     should_end_session = False
 
-    if 'Phrase' in intent['slots']:
+    if 'Phrase' in intent['slots'] and 'value' in intent['slots']['Phrase']:
         phrase = intent['slots']['Phrase']['value']
         piglatin_phrase = to_piglatin(session_attributes, phrase)
-        speech_output = "In Pig Latin " + phrase + " sounds like, " + piglatin_phrase
+        speech_output = "In Pig Latin " + add_emphasis(phrase, 'moderate') + " sounds like, " + piglatin_phrase
+        speech_output = speech_output + add_break('1') + "Try another phrase."
     else:
         speech_output = "I didn't understand that. Try again by saying like, " \
                         "say wake up in pig latin."
@@ -692,10 +722,11 @@ def to_gibberish_in_session(intent, session):
     session_attributes = session.get('attributes', {})
     should_end_session = False
 
-    if 'Phrase' in intent['slots']:
+    if 'Phrase' in intent['slots'] and 'value' in intent['slots']['Phrase']:
         phrase = intent['slots']['Phrase']['value']
         gibberish_phrase = to_gibberish(session_attributes, phrase)
-        speech_output = "In Gibberish " + phrase + " sounds like, " + gibberish_phrase
+        speech_output = "In Gibberish " + add_emphasis(phrase, 'moderate') + " sounds like, " + gibberish_phrase
+        speech_output = speech_output + add_break('1') + "Try another phrase."
     else:
         speech_output = "I didn't understand that. Try again by saying like, " \
                         "What's true love in gibberish."
@@ -747,7 +778,7 @@ def on_intent(intent_request, session):
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
         return handle_session_end_request()
     else:
-        raise ValueError("Invalid intent")
+        return get_tryagain_response()
 
 
 def on_session_ended(session_ended_request, session):
