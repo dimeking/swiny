@@ -524,7 +524,7 @@ hyphenate_word = hyphenator.hyphenate_word
 del patterns
 del exceptions
 
-skill_name = "Swiny Whiny"
+skill_name = "Silly Lingo"
 
 # --------------- Helpers that build all of the responses ----------------------
 
@@ -607,7 +607,7 @@ def get_tryagain_response():
 
 def handle_session_end_request():
     card_title = "Thank you from " + skill_name
-    speech_output = "Thank you for trying the Alexa Skill Swiny. " \
+    speech_output = "Thank you for trying the Alexa Skill " + skill_name + ". " \
                     "Have a nice day! "
     # Setting this to true ends the session and exits the skill.
     should_end_session = True
